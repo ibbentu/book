@@ -4,7 +4,8 @@
 > - 코드 재사용성을 최대로 제공한다
 > - introspection과 같은 python의 동적 기능을 활용해 코드의 양을 줄여준다
 
-## 주요 프레임워크 컴포넌트
+---
+### 주요 프레임워크 컴포넌트
 #### __MTV(Model-Template-View) 패턴을 따른다__
 > - __모델__\
 논리적 데이터 구조를 정의하는 데이터베이스와 뷰 사이의 데이터 핸들러이다
@@ -27,4 +28,35 @@
 + 추가로 장고는 요청/응답 프로세스에 미들웨어라고 하는 후크를 포함하고 있다
 
 ---
+## 프로젝트 생성
+초기 프로젝트 파일 구조 생성
+`django-admin startproject mysite`
+> - manage.py\
+프로젝트와 상호작용할 때 사용하는 커맨드라인 도구
+> - mysite/__init__.py\
+mysite 디렉터리를 python 모듈로 취급하도록 python에 지시하는 빈 파일
+> - mysite/asgi.py\
+ASGI 호환 웹서버와 함께 ASGI(Asynchronous Server Gateway Interface) 애플리케이션으로 프로젝트를 실행하기 위한 구성
+>   - ASGI는 비동기 웹 서버 및 애플리케이션을 위한 python 표준
+> - settings.py\
+프로젝트 설정 및 구성하며 초기 기본 설정을 포함
+> - urls.py\
+URL 패턴이 정의되며 이곳에 정의된 각 URL은 뷰에 매핑됨
+> - wsgi.py\
+WSGI 호환 웹 서버와 함께 WSGI(Web Server Gateway Interface) 애플리케이션으로 프로젝트를 실행하기 위한 구성
+
+---
+### 초기 데이터베이스 마이그레이션 적용
+- 기본 구성은 SQLite3으로 설정되어있다
+- 프로젝트 폴더로 이동해 `python manage.py migrate` 명령어로 `INSTALLED_APPS` 설정에 열거된 애플리케이션을 위한 테이블들이 데이터베이스에 생성된다
+
+### 개발 서버 실행
+- 프로덕션 서버를 구성하기 위한 시간을 소비하지 않고 빠르게 코드를 실행할 수 있는 경량 웹서버가 포함되어있다
+- 코드의 변경 사항을 지속적으로 확인해 반영해준다
+`python manage.py runserver`
+> - 다만 이 서버는 개발 전용으로 프로덕션 용도로 적합하지 않다
+
+---
+
+
 
