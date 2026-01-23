@@ -12,3 +12,5 @@
 `pip install django~=4.2.0`
 - installed version check\
 `python -m django --version`
+- create sample project\
+`django-admin startproject <name>`
