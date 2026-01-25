@@ -20,3 +20,4 @@
 - run develop server\
 `python manage.py runserver`\
 or `python manage.py runserver 127.0.0.1:8000 --settings=mysite.settings`
+- 
