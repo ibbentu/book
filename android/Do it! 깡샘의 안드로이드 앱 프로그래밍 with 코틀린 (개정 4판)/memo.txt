@@ -197,3 +197,4 @@ Kotlin의 장점
 - https://stackoverflow.com/questions/79849957/android-studio-kotlin-sourceset-with-name-main-not-found
 
 # 변수
+
