@@ -1,5 +1,5 @@
 # Versions
-- python=3.12.10
+- python=3.10.11
 - Django=4.2.27
 
 ## reference
