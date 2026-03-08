@@ -1,12 +1,12 @@
-## 장고 개요
+# 장고 개요
 > 장고는 컴포넌트로 구성된 프레임워크이다
 > - 장고 컴포넌트는 느슨하게 결합되어 있어 독립적으로 관리할 수 있으며, 여러 계층의 책임을 분리하는데 이점이 있다
 > - 코드 재사용성을 최대로 제공한다
 > - introspection과 같은 python의 동적 기능을 활용해 코드의 양을 줄여준다
 
 ---
-### 주요 프레임워크 컴포넌트
-#### __MTV(Model-Template-View) 패턴을 따른다__
+## 주요 프레임워크 컴포넌트
+### __MTV(Model-Template-View) 패턴을 따른다__
 > - __모델__\
 논리적 데이터 구조를 정의하는 데이터베이스와 뷰 사이의 데이터 핸들러이다
 > - __템플릿__\
@@ -18,7 +18,7 @@
 개발 시 항상 모델, 뷰, 템플릿 및 URL로 작업한다
 
 ---
-### 장고가 HTTP 요청을 처리하고 응답을 생성하는 방법
+## 장고가 HTTP 요청을 처리하고 응답을 생성하는 방법
 > 1. 웹 브라우저가 URL로 페이지를 요청하고 웹 서버가 HTTP 요청을 장고에 전달한다
 > 2. 장고는 설정된 URL 패턴을 살펴보고 처음으로 일치하는 URL 패턴을 발견한다
 > 3. 장고는 일치하는 URL 패턴에 해당하는 뷰를 실행한다
@@ -29,28 +29,28 @@
 
 ---
 ## 프로젝트 생성
-초기 프로젝트 파일 구조 생성
+__초기 프로젝트 파일 구조 생성__ \
 `django-admin startproject mysite`
-> - manage.py\
+> - __manage.py__ \
 프로젝트와 상호작용할 때 사용하는 커맨드라인 도구
-> - mysite/__init__.py\
+> - __mysite/__init__.py__ \
 mysite 디렉터리를 python 모듈로 취급하도록 python에 지시하는 빈 파일
-> - mysite/asgi.py\
+> - __mysite/asgi.py__ \
 ASGI 호환 웹서버와 함께 ASGI(Asynchronous Server Gateway Interface) 애플리케이션으로 프로젝트를 실행하기 위한 구성
 >   - ASGI는 비동기 웹 서버 및 애플리케이션을 위한 python 표준
-> - settings.py\
+> - __settings.py__ \
 프로젝트 설정 및 구성하며 초기 기본 설정을 포함
-> - urls.py\
+> - __urls.py__ \
 URL 패턴이 정의되며 이곳에 정의된 각 URL은 뷰에 매핑됨
-> - wsgi.py\
+> - __wsgi.py__ \
 WSGI 호환 웹 서버와 함께 WSGI(Web Server Gateway Interface) 애플리케이션으로 프로젝트를 실행하기 위한 구성
 
 ---
-### 초기 데이터베이스 마이그레이션 적용
+## 초기 데이터베이스 마이그레이션 적용
 - 기본 구성은 SQLite3으로 설정되어있다
 - 프로젝트 폴더로 이동해 `python manage.py migrate` 명령어로 `INSTALLED_APPS` 설정에 열거된 애플리케이션을 위한 테이블들이 데이터베이스에 생성된다
 
-### 개발 서버 실행
+## 개발 서버 실행
 - 프로덕션 서버를 구성하기 위한 시간을 소비하지 않고 빠르게 코드를 실행할 수 있는 경량 웹서버가 포함되어있다
 - 코드의 변경 사항을 지속적으로 확인해 반영해준다
 `python manage.py runserver`
@@ -58,4 +58,46 @@ WSGI 호환 웹 서버와 함께 WSGI(Web Server Gateway Interface) 애플리케
 
 ---
 
-### 프로젝트 설정
+## 프로젝트 설정
+### settings.py 파일
+> - __DEBUG__ \
+프로젝트의 디버그 모드를 설정하는 옵션이다 \
+True일 경우 애플리케이션에서 처리하지 않은 예외가 발생할 때 자세한 오류 페이지를 표시한다 \
+민감한 데이터가 노출될 수 있으므로 프로덕션 환경에서는 반드시 False로 설정해야한다
+
+> - __ALLOWED_HOSTS__ \
+장고 사이트를 제공할 수 있도록 이 설정에 도메인/호스트를 추가해야한다
+DEBUG가 True이거나 테스트가 동작 중일 때는 적용되지 않는다
+
+> - __INSTALLED_APPS__ \
+장고에게 이 사이트에서 어떤 애플리케이션들을 활성화할지 알려주는 설정으로 모든 프로젝트에서 편집해야한다 \
+기본적으로 장고에 포함되어있는 애플리케이션은 다음과 같다 \
+    django.contrib.admin: 관리 사이트 \
+    django.contrib.auth: 인증 프레임워크 \
+    django.contrib.contenttypes: 콘텐츠 유형 처리를 위한 프레임워크 \
+    django.contrib.sessions: 세션 프레임워크 \
+    django.contrib.messages: 메시징 프레임워크 \
+    django.contrib.staticfiles: 정적 파일 관리 프레임워크 \
+
+> - __MIDDLEWARE__ \
+실행할 미들웨어가 포함되어있는 목록
+
+> - __ROOT_URLCONF__ \
+애플리케이션의 루트 URL 패턴이 정의된 파이썬 모듈
+
+> - __DATABASES__ \
+프로젝트에서 사용할 모든 데이터베이스 설정을 포함하는 딕셔너리
+항상 기본 데이터베이스가 있어야한다
+기본 구성은 SQLite3이다
+
+> - __LANGUAGE_CODE__ \
+장고 사이트의 기본 언어 코드 설정
+
+> - __USE_TZ__ \
+장고에 시간대 지원 여부를 설정하는 옵션이다 \
+장고는 시간대를 인식하는 datetime을 지원한다 \
+이 설정은 startproject 관리 명령으로 새 프로젝트를 생성 시 True로 설정된다
+
+---
+
+### 프로젝트와 애플리케이션
