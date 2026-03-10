@@ -156,3 +156,77 @@ blog 애플리케이션의 주요 구성이 포함되는 곳
 - 모델을 만들 때 장고는 데이터베이스의 객체를 쉽게 쿼리할 수 있는 API를 제공한다
 
 ## 게시물 모델 만들기
+이전에 생성한 blog의 models.py 파일을 수정해
+블로그 게시물(Post)을 데이터베이스에 저장할 수 있는 Post 모델을 정의한다
+
+``` python
+from django.db import models
+
+class Post(models.Model):
+    title = models.CharField(max_length=250)
+    slug = models.SlugField(max_length=250)
+    body = models.TextField()
+
+    def __str__(self):
+        return self.title
+```
+제목(title), 짧은 레이블(slug), 본문(body)로 데이터 모델을 생성하는 코드
+
+> - __title__ \
+게시물의 제목 필드 \
+SQL 데이터베이스의 VARCHAR로 변환되는 CharField 필드이다
+
+> - __slug__ \
+SQL 데이터베이스에서 VARCHAR로 변환되는 SlugField 필드이다 \
+slug는 문자, 숫자, 밑줄, 하이픈만 포함하는 짧은 레이블이다 \
+
+> - __body__ \
+게시물의 본문을 저장하는 필드이다 \
+SQL 데이터베이스의 TEXT 칼럼으로 변환되는 TextField 필드이다
+
++ 모델 클래스의 \_\_str\_\_() 매서드는 객체를 표현하는 문자열을 반환하는 파이썬의 기본 메서드이다 \
+장고는 이 메서드를 사용해 장고 관리 사이트와 같은 여러 위치에서 객체의 이름으로 표시한다
+
+장고는 모델 필드에 맞는 데이터베이스 칼럼을 생성한다 \
+장고는 기본적으로 각 모델에 자동으로 증가하는 기본(primary) 키 필드를 추가한다 \
++ 기본 키 필드의 유형은 각 애플리케이션 구성 혹은 DEFAULT_AUTO_FIELD 설정을 통해 전역적으로 지정된다
++ startapp 명령어로 애플리케이션을 생성할 때 DEFAULT_AUTO_FIELD의 기본 값은 BigAutoField이다 (64비트 정수 ID)
++ 모델 기본 키를 지정하지 않으면 장고가 이 필드를 자동으로 추가한다
+
+모델 필드에 primary_key=True를 설정해 모델 필드 중 하나를 기본 키로 정의할 수 있다
+
+
+## datetime 필드 추가하기
+게시물의 게시 날짜와 시간을 저장할 필드를 생성한다 \
+Post 객체가 생성되고 마지막으로 수정된 날짜와 시간을 저장한다
+``` python
+from django.db import models
+from django.utils import timezone
+
+class Post(models.Model):
+    title = models.CharField(max_length=250)
+    slug = models.SlugField(max_length=250)
+    body = models.TextField()
+    publish = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+```
+> - __publish__ \
+SQL 데이터베이스의 DATETIME 칼럼으로 변환되는 DateTimeField 필드이다 \
+게시물이 게시된 날짜와 시간을 저장하는데 사용한다 \
+__timezone.now__는 시간대를 인식하여 알맞은 형식으로 datetime을 반환한다
+
+> - __created__ \
+DateTimeField 필드이다 \
+게시물이 생성된 날짜와 시간을 저장하는데 사용한다 \
+__auto_now_add__ 를 사용해 객체를 생성할 때 날짜를 자동으로 저장한다
+
+> - __updated__ \
+DateTimeField 필드이다 \
+게시물이 갱신된 마지막 날짜와 시간을 저장하는데 사용한다 \
+__auto_now__ 를 사용해 객체가 저장될 때 날짜를 자동으로 갱신한다
+
+## 기본 정렬 순서 정의하기
