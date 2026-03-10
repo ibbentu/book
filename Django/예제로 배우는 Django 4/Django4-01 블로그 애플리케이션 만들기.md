@@ -230,3 +230,29 @@ DateTimeField 필드이다 \
 __auto_now__ 를 사용해 객체가 저장될 때 날짜를 자동으로 갱신한다
 
 ## 기본 정렬 순서 정의하기
+블로그의 게시물이 시간의 역순으로 표시될 수 있도록 모델의 기본 순서를 정의한다 \
+쿼리에 순서가 지정되지 않은 경우 데이터베이스에서 객체를 가져올 때 기본 순서로 적용된다
+```python
+from django.db import models
+from django.utils import timezone
+
+class Post(models.Model):
+    title = models.CharField(max_length=250)
+    slug = models.SlugField(max_length=250)
+    body = models.TextField()
+    publish = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-publish')
+        
+    def __str__(self):
+        return self.title
+```
+모델 내부에 Meta 클래스를 추가해 모델에 대한 메타데이터를 정의한다 \
+ordering 속성을 사용해 장고에 publish 필드를 사용해 결과를 정렬하도록 지시한다 \
+이 순서는 쿼리에 특정 순서가 제공되지 않은 경우 데이터베이스 쿼리에 기본적으로 적용된다 \
+__-publish__ 처럼 하이픈을 사용해 내림차순을 표현한다
+
+## 데이터베이스 인덱스 추가하기
