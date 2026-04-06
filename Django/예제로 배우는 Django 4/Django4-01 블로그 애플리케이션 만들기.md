@@ -316,7 +316,12 @@ INSTALLED_APPS = [
 ## 상태 필드 추가하기
 모델에 상태(status) 필드를 추가한다 \
 예제의 블로그의 경우 게시물을 임시로 저장하는 기능을 추가하기 위해 게시물의 상태를 관리하는 상태를 추가한다 \
-예제의 경우 Draft(임시), Published(게시됨) 상태를 추가한다
+예제의 경우 Draft(임시), Published(게시됨) 상태를 추가한다 \
+models.TextChoices를 상속해 열거형 클래스 Status를 정의한다 \
+- 선택을 정의하기 위해 하위 클래스로 분류할 수 있는 열거형을 제공한다
+- 모델 클래스 내부에서 선택 항목을 정의하고 열거형을 사용하면 모든 위치에서 선택 항목의 레이블, 값 또는 이름을 쉽게 조회할 수 있다
+- Post 모델을 임포트해서 Post.Status.DRAFT를 코드 어디에서나 참조로 사용할 수 있다
+
 ```python
 [blog/models.py]
 
@@ -355,3 +360,6 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 ```
+Post.Status.choices으로 사용 가능한 선택 항목 값을 얻는다
+Post.Status.labels으로 사람이 읽을 수 있는 명칭 값을 얻는다
+Post.Status.values으로 선택 항목의 실제 값을 얻는다
