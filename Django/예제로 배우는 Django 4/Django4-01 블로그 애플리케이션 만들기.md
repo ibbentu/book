@@ -160,6 +160,8 @@ blog 애플리케이션의 주요 구성이 포함되는 곳
 블로그 게시물(Post)을 데이터베이스에 저장할 수 있는 Post 모델을 정의한다
 
 ``` python
+[blog/models.py]
+
 from django.db import models
 
 class Post(models.Model):
@@ -200,6 +202,8 @@ SQL 데이터베이스의 TEXT 칼럼으로 변환되는 TextField 필드이다
 게시물의 게시 날짜와 시간을 저장할 필드를 생성한다 \
 Post 객체가 생성되고 마지막으로 수정된 날짜와 시간을 저장한다
 ``` python
+[blog/models.py]
+
 from django.db import models
 from django.utils import timezone
 
@@ -232,7 +236,10 @@ __auto_now__ 를 사용해 객체가 저장될 때 날짜를 자동으로 갱신
 ## 기본 정렬 순서 정의하기
 블로그의 게시물이 시간의 역순으로 표시될 수 있도록 모델의 기본 순서를 정의한다 \
 쿼리에 순서가 지정되지 않은 경우 데이터베이스에서 객체를 가져올 때 기본 순서로 적용된다
+
 ```python
+[blog/models.py]
+
 from django.db import models
 from django.utils import timezone
 
@@ -256,3 +263,95 @@ ordering 속성을 사용해 장고에 publish 필드를 사용해 결과를 정
 __-publish__ 처럼 하이픈을 사용해 내림차순을 표현한다
 
 ## 데이터베이스 인덱스 추가하기
+publish 필드로 데이터베이스 인덱스를 정의한다 \
+필드를 기준으로 결과를 필터링하거나 정렬하는 쿼리의 성능이 크게 향상된다
+
+```python
+[blog/models.py]
+
+from django.db import models
+from django.utils import timezone
+
+class Post(models.Model):
+    # model
+    title = models.CharField(max_length=250)
+    slug = models.SlugField(max_length=250)
+    body = models.TextField()
+
+    # datetime
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # order
+        ordering = ['-publish']
+
+        # index
+        indexes = [
+            models.Index(fields=['-publish']),
+        ]
+
+    def __str__(self):
+        return self.title
+```
+
+## 애플리케이션 활성화하기
+모델에 대한 데이터베이스 테이블을 생성하려면 blog 애플리케이션을 활성화해야한다 \
+settings.py의 설정을 변경해 활성화한다
+- blog.apps.BlogConfig를 INSTALLED_APPS 설정에 추가한다
+```
+[settings.py]
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'blog.apps.BlogConfig',
+]
+```
+
+## 상태 필드 추가하기
+모델에 상태(status) 필드를 추가한다 \
+예제의 블로그의 경우 게시물을 임시로 저장하는 기능을 추가하기 위해 게시물의 상태를 관리하는 상태를 추가한다 \
+예제의 경우 Draft(임시), Published(게시됨) 상태를 추가한다
+```python
+[blog/models.py]
+
+from django.db import models
+from django.utils import timezone
+
+class Post(models.Model):
+    # status
+    class Status(models.Textchoices):
+        DRAFT = 'DF', 'Draft'
+        PUBLISHED = 'PB', 'Published'
+    status = models.CharField(
+        max_length=2,
+        choices=Status.choices,
+        default=Status.DRAFT
+    )
+
+    # model
+    title = models.CharField(max_length=250)
+    slug = models.SlugField(max_length=250)
+    body = models.TextField()
+
+    # datetime
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # order
+        ordering = ['-publish']
+
+        # index
+        indexes = [
+            models.Index(fields=['-publish']),
+        ]
+
+    def __str__(self):
+        return self.title
+```
