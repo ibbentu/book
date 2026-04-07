@@ -27,6 +27,10 @@ or `python manage.py runserver 127.0.0.1:8000 --settings=mysite.settings`
 `python manage.py startapp blog`
 - run python shell \
 `python manage.py shell`
+- make initial migration for Post model
+`python manage.py makemigrations blog`
+- print migrate work
+`python manage.py sqlmigrate blog 0001`
 
 ---
 ## troubleshooting

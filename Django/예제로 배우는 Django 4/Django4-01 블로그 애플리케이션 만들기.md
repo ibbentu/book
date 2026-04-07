@@ -365,3 +365,80 @@ class Post(models.Model):
 Post.Status.choices으로 사용 가능한 선택 항목 값을 얻는다
 Post.Status.labels으로 사람이 읽을 수 있는 명칭 값을 얻는다
 Post.Status.values으로 선택 항목의 실제 값을 얻는다
+```
+[python manage.py shell]
+
+>>> from blog.models import Post
+>>> Post.Status.choices
+>>> Post.Status.labels
+>>> Post.Status.values
+>>> Post.Status.names
+```
+## 다대일 관계 추가하기
+예시에서는 사용자와 게시물 간의 관계를 생성한다 \
+장고 인증 프레임워크는 django.contrib.auth 패키지로 제공된다 \
+장고 인증 프레임워크의 User 모델을 사용해 관계를 생성한다
+```python
+[blog/models.py]
+
+from django.db import models
+from django.utils import timezone
+from django.contrib.auth.models import User
+
+class Post(models.Model):
+    # status
+    class Status(models.TextChoices):
+        DRAFT = 'DF', 'Draft'
+        PUBLISHED = 'PB', 'Published'
+    status = models.CharField(
+        max_length=2,
+        choices=Status.choices,
+        default=Status.DRAFT
+    )
+
+    # model
+    title = models.CharField(max_length=250)
+    slug = models.SlugField(max_length=250)
+    body = models.TextField()
+
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='blog_posts'
+    )
+
+    # datetime
+    publish = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # order
+        ordering = ['-publish']
+
+        # index
+        indexes = [
+            models.Index(fields=['-publish']),
+        ]
+
+    def __str__(self):
+        return self.title
+```
+on_delete 매개변수로 참조된 객체가 삭제될 때의 동작을 지정한다
+- 예제에서는 CASCADE를 사용 해 참조된 사용자가 삭제될 때 관련된 게시물들도 삭제하도록 설정
+- [참고] https://docs.djangoproject.com/en/4.2/ref/models/fields/#django.db.models.ForeignKey.on_delete
+
+related_name을 사용 해 User에서 Post로의 역방향 관계의 명칭을 지정한다
+
+## 마이그레이션 생성 및 적용하기
+장고는 모델의 변경 사항을 추적하고 데이터베이스에 적용할 수 있는 마이그레이션 시스템이 있다 \
+migrate 명령은 INSTALLED_APPS에 열거된 모든 애플리케이션에 마이그레이션을 적용한다 \
+
+---
+# 모델용 관리 사이트 만들기
+## 슈퍼유저 생성하기
+관리 사이트를 관리하는 사용자를 생성한다 \
+`python manage.py createsuperuser` \
+이 명령어로 생성된 사용자는 가장 높은 권한을 가지는 관리용 사용자이다
+
+## 장고 관리 사이트
